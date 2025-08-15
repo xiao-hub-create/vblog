@@ -1,0 +1,26 @@
+[http]
+  # HTTP服务Host
+  host = "127.0.0.1"
+  # HTTP服务端口
+  port = 8010
+
+[datasource]
+  provider = "mysql"
+  host = "127.0.0.1"
+  port = 3306
+  database = "vblog"
+  username = "root"
+  password = "123"
+  debug = true
+
+[log]
+  # 日志的级别, 默认Debug
+  level = "debug"
+
+[log.console]
+  enable = true
+  no_color = false
+
+[log.file]
+  # 是否开启文件记录
+  enable = true

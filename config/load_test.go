@@ -1,6 +1,10 @@
-package config
+package config_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/xiao-hub-create/vblog/config"
+)
 
 func TestLoadConfigFromYaml(t *testing.T) {
 	if err := config.LoadConfigFromYaml("application.yaml"); err != nil {
