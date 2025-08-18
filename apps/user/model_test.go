@@ -1,18 +1,25 @@
 package user_test
 
 import (
-	"github.com/xiao-hub-create/vblog/apps/user"
 	"testing"
+
+	"github.com/xiao-hub-create/vblog/apps/user"
+	"github.com/xiao-hub-create/vblog/test"
 
 	"github.com/infraboard/mcube/v2/ioc/config/datasource"
 )
 
 func TestMigrate(t *testing.T) {
+	Init()
 	//连接数据库
 	if err := datasource.DB().AutoMigrate(&user.User{}); err != nil {
 		t.Fatal(err)
 	}
 
+}
+
+func Init() {
+	test.DevelopmentSetup()
 }
 
 //版本1
