@@ -3,8 +3,22 @@ package user
 import (
 	"time"
 
+	"github.com/infraboard/mcube/v2/exception"
+	"github.com/infraboard/mcube/v2/ioc/config/validator"
+	"github.com/infraboard/mcube/v2/tools/pretty"
 	"github.com/xiao-hub-create/vblog/utils"
+	"golang.org/x/crypto/bcrypt"
 )
+
+func New(req *RegistryRequest) (*User, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("参数校验失败: %s", err)
+	}
+	return &User{
+		ResourceMeta:    *utils.NewResourceMeta(),
+		RegistryRequest: *req,
+	}, nil
+}
 
 type User struct {
 	//存放到数据里的对象的元数据
@@ -13,13 +27,28 @@ type User struct {
 	RegistryRequest
 }
 
+func (r User) String() string {
+	return pretty.ToJSON(r)
+}
+func NewRegistryRequest() *RegistryRequest {
+	return &RegistryRequest{}
+}
+
 type RegistryRequest struct {
-	Username string `json:"username" gorm:"column:username;unique;index"`
-	Password string `json:"password" gorm:"column:password;type:varchar(255)"`
+	Username string `json:"username" gorm:"column:username;unique;index" validate:"required"`
+	Password string `json:"password" gorm:"column:password;type:varchar(255)" validate:"required"`
 	//用户资料
 	Profile
 	//用户状态
 	Status
+}
+
+func (r *RegistryRequest) CheckPassword(password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(r.Password), []byte(password))
+}
+
+func (r *RegistryRequest) Validate() error {
+	return validator.Validate(r)
 }
 
 type Profile struct {

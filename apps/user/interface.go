@@ -1,6 +1,19 @@
 package user
 
-import "context"
+import (
+	"context"
+
+	"github.com/infraboard/mcube/v2/ioc"
+)
+
+// 获取实现，从ioc
+func GetService() Service {
+	return ioc.Controller().Get(AppName).(Service)
+}
+
+const (
+	AppName = "user"
+)
 
 type Service interface {
 	AdminService

@@ -2,8 +2,14 @@ package utils
 
 import "time"
 
+func NewResourceMeta() *ResourceMeta {
+	return &ResourceMeta{
+		CreatedAt: time.Now(),
+	}
+}
+
 type ResourceMeta struct {
-	Id        uint      `json:"id" gorm:"primaryKey;column:id"`
+	Id        string    `json:"id" gorm:"primaryKey;column:id"`
 	CreatedAt time.Time `json:"created_at" gorm:"column:created_at;not null"`
 	//用户
 	CreateBy  string     `json:"create_by" gorm:"column:create_by;type:varchar(200)"`

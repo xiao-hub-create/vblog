@@ -1,13 +1,32 @@
 package token
 
-import "time"
+import (
+	"fmt"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/infraboard/mcube/v2/tools/pretty"
+)
+
+func NewToken(refUserId string) *Token {
+	aExpiredAt := time.Now().Add(time.Hour * 24 * 1)
+	rExpiredAt := time.Now().Add(time.Hour * 24 * 7)
+	return &Token{
+		RefUserId:            refUserId,
+		AccessToken:          uuid.NewString(),
+		AccessTokenExpireAt:  &aExpiredAt,
+		IssueAt:              time.Now(),
+		RefreshToken:         uuid.NewString(),
+		RefreshTokenExpireAt: &rExpiredAt,
+	}
+}
 
 // 用户身份令牌
 type Token struct {
 	//主键
 	Id uint `json:"id" gorm:"primaryKey;column:id"`
 	//用户id
-	RefUserId uint `json:"user_id" gorm:"column:ref_user_id"`
+	RefUserId string `json:"user_id" gorm:"column:ref_user_id"`
 	//关联查询
 	RefUserName string `json:"ref_user_name" gorm:"-"`
 
@@ -27,4 +46,33 @@ type Token struct {
 
 func (t *Token) TableName() string {
 	return "tokens"
+}
+
+func (t *Token) String() string {
+	return pretty.ToJSON(t)
+}
+
+func (t *Token) SetRefUserName(refUserName string) *Token {
+	t.RefUserName = refUserName
+	return t
+}
+
+func (r *Token) IsAccessTokenExpired() error {
+	if r.AccessTokenExpireAt == nil {
+		return nil
+	}
+	if r.AccessTokenExpireAt.Before(time.Now()) {
+		return fmt.Errorf("access token expired")
+	}
+	return nil
+}
+
+func (r *Token) IsRefreshTokenExpired() error {
+	if r.RefreshTokenExpireAt == nil {
+		return nil
+	}
+	if r.RefreshTokenExpireAt.Before(time.Now()) {
+		return fmt.Errorf("refresh token expired")
+	}
+	return nil
 }

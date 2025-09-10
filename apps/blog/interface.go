@@ -2,6 +2,7 @@ package blog
 
 import (
 	"context"
+	"strings"
 
 	"github.com/xiao-hub-create/vblog/utils"
 )
@@ -21,19 +22,38 @@ type Service interface {
 	DeleteBlog(context.Context, *DetailBlogRequest) error
 }
 
+func NewListBlogRequset() *ListBlogRequest {
+	return &ListBlogRequest{
+		PageRequest: *utils.NewPageRequest(),
+		Tags:        map[string]string{},
+	}
+}
+
 type ListBlogRequest struct {
 	//分页参数
 	utils.PageRequest
 	//关键字查询参数，标题，内容，摘要，作者，分类，标签
-	Keywords string `json:"keywords"`
+	Keywords string `json:"keywords" form:"keywords"`
 	//状态过滤参数，作者：nil,访客：STAGE_PUBLISHED
-	Stage *STAGE `json:"stage"`
+	Stage *STAGE `json:"stage" form:"stage"`
 	//查询某个用户具体的文章
-	Username string `json:"username"`
+	CreateBy string `json:"create_by" form:"create_by"`
 	//查询分类的文章
-	Category string `json:"category"`
+	Category string `json:"category" form:"category"`
 	//查询tag相关文章
-	Tags map[string]string `json:"tags"`
+	Tags map[string]string `json:"tags" form:"-"`
+}
+
+func (r *ListBlogRequest) SetTag(tags string) {
+	kvItem := strings.Split(tags, ",")
+	for i := range kvItem {
+		kvString := kvItem[i]
+		kv := strings.Split(kvString, "=")
+		if len(kv) > 1 {
+			r.Tags[kv[0]] = strings.Join(kv[1:], "=")
+		}
+
+	}
 }
 
 type DetailBlogRequest struct {

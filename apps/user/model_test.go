@@ -1,16 +1,20 @@
 package user_test
 
 import (
+	"log"
 	"testing"
 
 	"github.com/xiao-hub-create/vblog/apps/user"
-	"github.com/xiao-hub-create/vblog/test"
+	"github.com/xiao-hub-create/vblog/config"
 
 	"github.com/infraboard/mcube/v2/ioc/config/datasource"
 )
 
 func TestMigrate(t *testing.T) {
-	Init()
+
+	if err := Init(); err != nil {
+		log.Fatalf("Could not initialize: %v", err)
+	}
 	//连接数据库
 	if err := datasource.DB().AutoMigrate(&user.User{}); err != nil {
 		t.Fatal(err)
@@ -18,8 +22,11 @@ func TestMigrate(t *testing.T) {
 
 }
 
-func Init() {
-	test.DevelopmentSetup()
+func Init() error {
+	if err := config.LoadConfig(); err != nil {
+		return err
+	}
+	return nil
 }
 
 //版本1

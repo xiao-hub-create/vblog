@@ -1,3 +1,6 @@
 {
-    "go.testEnvFile": "${workspaceFolder}/etc/test.env"
+    "go.testEnvFile": "${workspaceFolder}/etc/test.env",
+    "go.testEnvVars": {
+        "WORKSPACE_DIR": "${workspaceFolder}"
+    }
 }

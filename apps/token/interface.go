@@ -1,6 +1,10 @@
 package token
 
-import "context"
+import (
+	"context"
+
+	"github.com/infraboard/mcube/v2/ioc/config/validator"
+)
 
 // 业务域
 type Service interface {
@@ -17,13 +21,24 @@ type UserService interface {
 	RevokeToken(context.Context, *RevokeTokenRequest) (*Token, error)
 }
 
+func NewIssueTokenRequest(username, password string) *IssueTokenRequest {
+	return &IssueTokenRequest{
+		Username: username,
+		Password: password,
+	}
+}
+
 type IssueTokenRequest struct {
 	//用户名
-	Username string `json:"username"`
+	Username string `json:"username" validate:"required"`
 	//密码
-	Password string `json:"password"`
+	Password string `json:"password" validate:"required"`
 	//Token可能1天过期，过期时间调整为7天
 	RememberMe bool `json:"remember_me"`
+}
+
+func (r *IssueTokenRequest) Validate() error {
+	return validator.Validate(r)
 }
 
 type RevokeTokenRequest struct {
@@ -43,4 +58,10 @@ type InnerService interface {
 type ValidateTokenRequest struct {
 	//访问令牌
 	AccessToken string `json:"access_token"`
+}
+
+func NewValidateTokenRequest(accessToken string) *ValidateTokenRequest {
+	return &ValidateTokenRequest{
+		AccessToken: accessToken,
+	}
 }

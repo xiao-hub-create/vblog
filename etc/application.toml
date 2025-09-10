@@ -2,7 +2,7 @@
   # HTTP服务Host
   host = "127.0.0.1"
   # HTTP服务端口
-  port = 8010
+  port = 8080
 
 [datasource]
   provider = "mysql"
